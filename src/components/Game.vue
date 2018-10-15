@@ -1,5 +1,4 @@
 <!-- eslint-disable -->
-import Player from '../objects/Player';
 <template>
   <div id="mainMenu" :class="status?'true':'false'">
     <!-- Contenedor de la cuadricula -->
@@ -77,12 +76,12 @@ export default {
                     y.flutter = false // Si se escucha el aleteo de los murcielagos
                 })
             })
-            let randX = this.randPosition()
-            let randY = this.randPosition()
             /* Generar archer */
-            this.matriz[randX][randY].archer = true
-            var player = new Player(this, randX, randY)
+            this.matriz[0][0].archer = true
+            var player = new Player(this, 0, 0)
 
+            let randX
+            let randY
             /* Generar wumpus*/
             do{
                 randX = this.randPosition()
