@@ -2,6 +2,9 @@
 <template>
   <div id="mainMenu" :class="status?'true':'false'">
     <!-- Contenedor de la cuadricula -->
+    <button @click="player.nextMove()">
+        Play
+    </button>
     <ul>
         <!-- Cada tupla de la cuadricula -->
         <li v-for="(x) in matriz">
@@ -39,17 +42,18 @@ export default {
         --> Cada JSON contendrá las caracteristicas de cada cuadro 
     */
       matriz: [
-          [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
-          [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
-          [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
-          [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
-          [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
-          [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
-          [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
-          [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
-          [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
-          [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
-      ]
+          [this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla()],
+          [this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla()],
+          [this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla()],
+          [this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla()],
+          [this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla()],
+          [this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla()],
+          [this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla()],
+          [this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla()],
+          [this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla()],
+          [this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla()],
+      ],
+      player: undefined
     }
   },
   /* WATCH escucha si cambia alguna variable dentro de data o props */
@@ -63,22 +67,9 @@ export default {
           */
         if(this.status){
         /* Se inicializan los valores default de la matriz */
-            this.matriz.forEach(function(x) { // Se mueve por la mariz (x es la tupla)
-                x.forEach(function(y) { //Se mueve por la tupla (y es el cuadro)
-                    /* Se inicializan las propiedades del cuadro */
-                    y.archer = false // Si esta el arquero
-                    y.visited = false // Si el espacio actual fue visitado
-                    y.wumpus = false // Si esta el wumpus
-                    y.smell = false // Si Si huele a wumpus
-                    y.hole = false // Si hay un hoyo
-                    y.breeze = false // Si sientes una brisa 
-                    y.bat = false // Si hay Murcielagos
-                    y.flutter = false // Si se escucha el aleteo de los murcielagos
-                })
-            })
             /* Generar archer */
             this.matriz[0][0].archer = true
-            var player = new Player(this, 0, 0)
+            this.player = new Player(this, 0, 0)
 
             let randX
             let randY
@@ -133,6 +124,18 @@ export default {
   methods: {
       randPosition(){
           return Math.floor(Math.random() * 10)
+      },
+      casilla(){
+          return {
+            archer: false, // Si esta el arquero
+            visited: false, // Si el espacio actual fue visitado
+            wumpus: false, // Si esta el wumpus
+            smell: false, // Si Si huele a wumpus
+            hole: false, // Si hay un hoyo
+            breeze: false, // Si sientes una brisa 
+            bat: false, // Si hay Murcielagos
+            flutter: false // Si se escucha el aleteo de los murcielagos
+          }
       }
   }
 }
@@ -159,6 +162,13 @@ export default {
   max-height: 618px;
   background: #E5E5E5;
   border: solid 15px #5A35FE;
+  position: relative;
+  button{
+      position: absolute;
+      bottom: -30px;
+      width: 648px;
+      left: -15px;
+  }
   >ul{
       width: 100%;
       height: 100%;

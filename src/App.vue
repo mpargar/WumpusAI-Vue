@@ -15,7 +15,7 @@ import MainMenu from './components/MainMenu.vue'
 import Game from './components/Game.vue'
 
 export default {
-  name: 'app',
+  name: 'app', //Identifica al componente
   components: {
     /* Se agregan los componentes importados */
     MainMenu,
@@ -47,6 +47,11 @@ export default {
           if(_this.mainMenu) _this.init()
           break;
       }
+    })
+  },
+  mounted(){
+    this.$root.$on('gameStatus', function () {
+      this.mainMenu = !this.mainMenu
     })
   },
   /* Aquí se guardan todos las funciones del modulo */
