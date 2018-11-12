@@ -130,6 +130,7 @@ export default {
                 }while(!this.matriz[randX][randY].bat)
             }
         }
+        this.player.log.matriz = this.matriz /* Rellenar log de la matriz */
         this.$nextTick(function () {
             window.setInterval(() => {
                 if(this.matriz[this.player.getX()][this.player.getY()].hole || this.matriz[this.player.getX()][this.player.getY()].wumpus){
@@ -150,7 +151,7 @@ export default {
         var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.player.log));
         var dlAnchorElem = document.getElementById('downloadAnchorElem');
         dlAnchorElem.setAttribute("href",     dataStr     );
-        dlAnchorElem.setAttribute("download", "scene.json");
+        dlAnchorElem.setAttribute("download", "wumpus ["+(new Date())+"].json");
         dlAnchorElem.click();
       },
       randPosition(){
@@ -160,6 +161,7 @@ export default {
           return {
             archer: false, // Si esta el arquero
             visited: false, // Si el espacio actual fue visitado
+            free: false, // Si el espacio esta libre
             wumpus: false, // Si esta el wumpus
             smell: false, // Si Si huele a wumpus
             hole: false, // Si hay un hoyo
@@ -221,6 +223,13 @@ export default {
     >h1{
         text-align: center;
         font-size: 160px;
+    }
+    >h2{
+        color: #CD5D23;
+        cursor: pointer;
+        &:hover{
+            color: rgb(251, 116, 49);
+        }
     }
     .Pause{
         color: #5A35FE;
