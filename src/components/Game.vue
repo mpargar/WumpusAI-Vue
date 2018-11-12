@@ -13,7 +13,7 @@
                 <li v-for="(y) in x">
                     <img v-if="y.bat" src="../assets/bat.svg">
                     <img v-if="y.wumpus" src="../assets/wumpus.svg">
-                    <img v-if="y.archer" src="../assets/player.svg">
+                    <img v-if="y.archer" class="player" src="../assets/player.svg">
                     <img v-if="y.hole" src="../assets/hole.svg">
                 </li>
             </ul>    
@@ -119,6 +119,17 @@ export default {
                 }while(!this.matriz[randX][randY].bat)
             }
         }
+        this.$nextTick(function () {
+            window.setInterval(() => {
+                if(this.player.alive){
+                    this.player.nextMove()
+                    if(this.matriz[this.player.getX()][this.player.getY()].hole || this.matriz[this.player.getX()][this.player.getY()].wumpus){
+                        this.player.alive = false
+                        console.log("Te moriste we");
+                    }
+                }
+            }, 500)
+        })
       }
   },
   methods: {
@@ -184,6 +195,7 @@ export default {
             display: flex;
             flex-direction: row;
             >li{
+                position: relative;
                 height: 100%;
                 width: 60px;
                 display: inline-flex;
@@ -198,6 +210,9 @@ export default {
                 >img{
                     max-width: 50px;
                     max-height: 50px;
+                }
+                .player{
+                    position: absolute;
                 }
             }
         }
