@@ -9,7 +9,10 @@ export default function (game, _x, _y) {
     var way = []
     var lastWays = []
     this.working = false
-    this.alive = true
+    this.log = {
+        matriz: undefined,
+        movs: []
+    }
 
     this.getX = function () {
         return x
@@ -19,15 +22,24 @@ export default function (game, _x, _y) {
         return y
     }
 
+    this.setXY = function (_x, _y) {
+        game.matriz[x][y].archer = false
+        lastWays = []
+        way = []
+        x = _x
+        y = _y
+        game.matriz[x][y].archer = true
+    }
+
     this.nextMove = function () {
         if(!this.working){
             this.working = true
             if(way.length){
                 this.action[way[0]]()
-                way.shift()
+                this.log.movs.push(way.shift())
             }else{
                 maping()
-                console.log('Siguiente movimiento(s) --> ', way);                
+                console.log('Siguiente movimiento(s) --> ', way);              
             }
         }
         this.working = false
@@ -43,10 +55,12 @@ export default function (game, _x, _y) {
             if (y + 1 < game.matriz.length) way.push('shootRight')
             if (x - 1 >= 0) way.push('shootUp')
             if (x + 1 < game.matriz.length) way.push('shootDown')
+            this.log.movs.push('Hay un wumpus! Preparandose para disparar')
             moveFound = true
         /* No hay peligros */   
         }else if (!game.matriz[x][y].breeze && !game.matriz[x][y].flutter){
             console.log('No hay peligros, preparando movimiento');
+            this.log.movs.push('No hay peligros, preparando movimiento')
             /* Salvar alrededores */
             game.matriz[x][y].free = true
             if(x + 1 < game.matriz.length) game.matriz[x + 1][y].free = true
@@ -74,6 +88,7 @@ export default function (game, _x, _y) {
         /* Si hay algun peligro */
         }else {
             console.log('Hay peligros! preparando movimiento seguro');
+            this.log.movs.push('Hay peligros! preparando movimiento seguro')
             /* Si esta la bandera de no peligro y no ha sido visitado*/
             if (y - 1 >= 0 && !game.matriz[x][y-1].visited && game.matriz[x][y-1].free) {
                 way.push('left')
@@ -146,7 +161,7 @@ export default function (game, _x, _y) {
         shootUp() {
             if(game.matriz[x-1][y].wumpus){
                 game.matriz[x-1][y].wumpus = false
-                location.reload();
+                game.state = 'You win'
             }else{
                 game.matriz[x-1][y].arrow = true
                 return false
@@ -155,7 +170,7 @@ export default function (game, _x, _y) {
         shootDown(){
             if(game.matriz[x+1][y].wumpus){
                 game.matriz[x+1][y].wumpus = false
-                location.reload();
+                game.state = 'You win'
             }else{
                 game.matriz[x+1][y].arrow = true
                 return false
@@ -164,7 +179,7 @@ export default function (game, _x, _y) {
         shootLeft(){
             if(game.matriz[x][y-1].wumpus){
                 game.matriz[x][y-1].wumpus = false
-                location.reload();
+                game.state = 'You win'
             }else{
                 game.matriz[x][y-1].arrow = true
                 return false
@@ -173,7 +188,7 @@ export default function (game, _x, _y) {
         shootRight(){
             if(game.matriz[x][y+1].wumpus){
                 game.matriz[x][y+1].wumpus = false
-                location.reload();
+                game.state = 'You win'
             }else{
                 game.matriz[x][y+1].arrow = true
                 return false

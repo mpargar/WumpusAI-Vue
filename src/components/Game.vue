@@ -2,15 +2,25 @@
 <template>
   <div id="mainMenu" :class="status?'true':'false'">
     <!-- Contenedor de la cuadricula -->
-    <button @click="player.nextMove()">
-        Play
+    <div v-if="state" class="splashScreen">
+        <h1 :class="state">{{state}}</h1>
+        <h2 @click="getLog()">Descargar log</h2>
+        <a id="downloadAnchorElem" style="display:none"></a>
+        <button @click="button()">
+            {{
+                (state == 'Pause'? 'Play' : 'Play Again')
+            }}
+        </button>
+    </div>
+    <button v-if="!state" @click="state='Pause'">
+        Pause
     </button>
     <ul>
         <!-- Cada tupla de la cuadricula -->
-        <li v-for="(x) in matriz">
+        <li v-for="(x, i) in matriz" :key="i">
             <ul>
                 <!-- Cada columna -->
-                <li v-for="(y) in x">
+                <li v-for="(y, j) in x" :class=" y.visited ? 'visitado':''" :key="i+'-'+j">
                     <img v-if="y.bat" src="../assets/bat.svg">
                     <img v-if="y.wumpus" src="../assets/wumpus.svg">
                     <img v-if="y.archer" class="player" src="../assets/player.svg">
@@ -53,7 +63,8 @@ export default {
           [this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla()],
           [this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla(), this.casilla()],
       ],
-      player: undefined
+      player: undefined,
+      state: ''
     }
   },
   /* WATCH escucha si cambia alguna variable dentro de data o props */
@@ -121,18 +132,27 @@ export default {
         }
         this.$nextTick(function () {
             window.setInterval(() => {
-                if(this.player.alive){
+                if(this.matriz[this.player.getX()][this.player.getY()].hole || this.matriz[this.player.getX()][this.player.getY()].wumpus){
+                    this.state = 'Game Over'
+                    console.log("Te moriste we");
+                } else if(this.matriz[this.player.getX()][this.player.getY()].bat){
+                    this.player.setXY(this.randPosition(), this.randPosition())
+                } 
+                if(!this.state){
                     this.player.nextMove()
-                    if(this.matriz[this.player.getX()][this.player.getY()].hole || this.matriz[this.player.getX()][this.player.getY()].wumpus){
-                        this.player.alive = false
-                        console.log("Te moriste we");
-                    }
                 }
             }, 500)
         })
       }
   },
   methods: {
+      getLog(){
+        var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.player.log));
+        var dlAnchorElem = document.getElementById('downloadAnchorElem');
+        dlAnchorElem.setAttribute("href",     dataStr     );
+        dlAnchorElem.setAttribute("download", "scene.json");
+        dlAnchorElem.click();
+      },
       randPosition(){
           return Math.floor(Math.random() * 10)
       },
@@ -147,6 +167,12 @@ export default {
             bat: false, // Si hay Murcielagos
             flutter: false // Si se escucha el aleteo de los murcielagos
           }
+      },
+      button(){
+        if(this.state=='Pause')
+            this.state=''
+        else
+            location.reload()
       }
   }
 }
@@ -179,6 +205,32 @@ export default {
       bottom: -30px;
       width: 648px;
       left: -15px;
+  }
+  .splashScreen{
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.857);
+    z-index: 999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    >h1{
+        text-align: center;
+        font-size: 160px;
+    }
+    .Pause{
+        color: #5A35FE;
+    }
+    .Game{
+        color: rgb(254, 53, 53);
+    }
+    .You{
+        color: rgb(70, 254, 53);
+    }
   }
   >ul{
       width: 100%;
@@ -214,6 +266,9 @@ export default {
                 .player{
                     position: absolute;
                 }
+            }
+            .visitado{
+                background: rgba(0, 0, 0, 0.258);
             }
         }
       }
